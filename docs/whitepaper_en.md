@@ -93,8 +93,10 @@ The student score allows for a quick filter on the crowdsourcing platform. A hig
 in this student will likely generate more STAR tokens than another with a lower score.
 
 The platform calculates the student score taking into account variables as:
-The completion status of the profile page data The funding model that the student selected Per capita income of the
-student residence And especially community upvotes and downvotes.
+- The completion status of the profile page data. 
+- The funding model that the student selected 
+- The per capita income of the student residence 
+- And especially, community upvotes and downvotes.
 
 ### Student crowdfunding platform:
 
