@@ -104,7 +104,7 @@ initiative. After all, who could be against it?
 Partners can also choose to accept STAR Tokens as part of the payment for the services it provides, which brings
 immediate value to the tokens even outside exchanges.
 
-# Technology breakdown
+# Solution components
 
 ### Student registration:
 
