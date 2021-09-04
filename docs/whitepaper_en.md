@@ -73,6 +73,9 @@ because of it.
 Indeed, it will be good for the institution's image to be associated with a disruptive charity for student solution
 initiative. After all, who could be against it?
 
+Partners can also choose to accept Start Tokens as part of the payment for the services it provides, which brings
+immediate value to the tokens even outside exchanges.
+
 # Conceptual prototype breakdown
 
 ### Student registration:
@@ -93,19 +96,20 @@ The student score allows for a quick filter on the crowdsourcing platform. A hig
 in this student will likely generate more STAR tokens than another with a lower score.
 
 The platform calculates the student score taking into account variables as:
-- The completion status of the profile page data. 
-- The funding model that the student selected 
-- The per capita income of the student residence 
+
+- The completion status of the profile page data.
+- The funding model that the student selected
+- The per capita income of the student residence
 - And especially, community upvotes and downvotes.
 
 ### Student crowdfunding platform:
 
-Allows for users to browse all open student proposals and to invest any amount of ?ETH? on a chosen student. It also allows for upvoting and downvoting student proposals.
+Allows for users to browse all open student proposals and to invest any amount of ?ETH? on a chosen student. It also
+allows for upvoting and downvoting student proposals.
 
 ### Blockchain
 
 ...
-
 
 ### Conclusion
 
