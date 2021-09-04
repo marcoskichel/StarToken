@@ -50,14 +50,42 @@ This fact by itself makes paying someone's studies a not so good investment.
 
 # The proposed solution
 
-We propose creating a platform henceforth called StarT, which allows users to discover/invest in community-curated
-student prospects.
+We propose creating a platform henceforth called StarT, which allows users to discover/invest in high potential,
+community-curated student prospects.
 
 The investment process happens peer-to-contract through the blockchain, making it fully trackable, eliminating a third
 party's need.
 
 The investment transaction generates new STAR Tokens, dividing them between the investor and the platform star pool,
 bringing it to a whole new level of potential for profitability and, once the platform is well spread, quick return.
+
+# STAR Tokens (STAR)
+
+### What are STAR Tokens?
+
+STAR Tokens are transactional erc20 tokens that the StarT platform generates to incentivize investors to fund students.
+
+While one can think of STAR Tokens as the cryptocurrency of the StarT network, it is more accurate to refer to it as the
+difference in the student's impact on society, allowed by the funds investors raise, once it concludes its studies.
+
+### How many STAR Tokens the StarT platform gives per investment?
+
+The StarT platform gives new STAR tokens to investors according to the following formula:
+
+(A*S)/C
+
+Where:
+
+- A = The invested amount
+- S = The student score
+- C = The current amount of STAR Tokens in circulation
+
+After that, 90% of it is given to the investor, while the other 10% stays on the platform.
+
+The above formula incentivizes investors to fund students with high potential while slowly decreasing the mint of new
+tokens to avoid high inflation rates.
+
+It also helps the platform to grow in its early days by giving back more potential value in its early stages.
 
 # Partners
 
@@ -73,10 +101,10 @@ because of it.
 Indeed, it will be good for the institution's image to be associated with a disruptive charity for student solution
 initiative. After all, who could be against it?
 
-Partners can also choose to accept Start Tokens as part of the payment for the services it provides, which brings
+Partners can also choose to accept STAR Tokens as part of the payment for the services it provides, which brings
 immediate value to the tokens even outside exchanges.
 
-# Conceptual prototype breakdown
+# Technology breakdown
 
 ### Student registration:
 
