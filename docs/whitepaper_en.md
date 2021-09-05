@@ -56,8 +56,8 @@ community-curated student prospects.
 The investment process happens peer-to-contract through the blockchain, making it fully trackable, eliminating a third
 party's need.
 
-The investment transaction generates new STAR Tokens, dividing them between the investor and the platform star pool,
-bringing it to a whole new level of potential for profitability and, once the platform is well spread, quick return.
+The investment transaction gives new STAR Tokens to the investors, bringing it to a whole new level of potential for
+profitability and, once the platform is well spread, quick return.
 
 # STAR Tokens (STAR)
 
@@ -80,12 +80,14 @@ Where:
 - S = The student score
 - C = The current amount of STAR Tokens in circulation
 
-After that, 90% of it is given to the investor, while the other 10% stays on the platform.
-
 The above formula incentivizes investors to fund students with high potential while slowly decreasing the mint of new
 tokens to avoid high inflation rates.
 
 It also helps the platform to grow in its early days by giving back more potential value in its early stages.
+
+### ICO
+
+...
 
 # Partners
 
@@ -130,15 +132,19 @@ The platform calculates the student score taking into account variables as:
 - The per capita income of the student residence
 - And especially, community upvotes and downvotes.
 
+//TODO Add formula
+
 ### Student crowdfunding platform:
 
-Allows for users to browse all open student proposals and to invest any amount of ?ETH? on a chosen student. It also
-allows for upvoting and downvoting student proposals.
+This website will allow the users to discover high potential student proposals quickly to invest. This website also
+provides an upvote/downvote feature, which impacts its score.
+
+The users will have at disposals many filter options, as student name, student residence per capita income range,
+location, and proposal score.
 
 ### Blockchain
 
-...
+The platform will use blockchain smart contracts to orchestrate investments and student payments, which conveys full
+trackability and security, making it impossible to fraud.
 
-### Conclusion
-
-...
+A smart contract will also be responsible for generating STAR Tokens and giving them to investors.
