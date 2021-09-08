@@ -1,0 +1,26 @@
+{
+  "name": "StarToken",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcoskichel/StarToken.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marcoskichel/StarToken/issues"
+  },
+  "homepage": "https://github.com/marcoskichel/StarToken#readme",
+  "devDependencies": {
+    "hardhat": "^2.6.3"
+  }
+}
