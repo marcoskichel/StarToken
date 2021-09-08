@@ -3,3 +3,8 @@
 
 # Dependencies
 node_modules
+
+# Solidity compiled
+cache
+artifacts
+typechain

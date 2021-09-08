@@ -1,5 +1,10 @@
-import "@nomiclabs/hardhat-ethers";
+import '@typechain/hardhat'
+import '@nomiclabs/hardhat-ethers'
+import '@nomiclabs/hardhat-waffle'
+import { HardhatUserConfig } from "hardhat/config";
 
-export default {
-  solidity: "0.7.3",
+const config: HardhatUserConfig = {
+  solidity: "0.8.0",
 };
+
+export default config
