@@ -1,19 +1,18 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-import { ERC777 } from  "@openzeppelin/contracts/token/ERC777/ERC777.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 /**
-* Implementation of the Star Token, a ERC777 token which is generated during crowdfundings
+* Implementation of the Star Token, a ERC20 token which is generated during crowdfundings
 **/
-contract StarToken is ERC777 {
+contract StarToken is ERC20 {
 
   constructor(
-    uint256 initialSupply,
-    address[] memory defaultOperators
-  ) ERC777("StarToken", "STAR", defaultOperators) {
+    uint256 initialSupply
+  ) ERC20("StarToken", "STAR") {
     // Mint the initialSupply and add it to the deployer wallet
-    _mint(msg.sender, initialSupply, "", "");
+    _mint(msg.sender, initialSupply);
   }
 
 }

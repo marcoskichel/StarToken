@@ -1,10 +1,11 @@
-import '@typechain/hardhat'
-import '@nomiclabs/hardhat-ethers'
-import '@nomiclabs/hardhat-waffle'
-import { HardhatUserConfig } from "hardhat/config";
+import { HardhatUserConfig } from 'hardhat/config';
+
+import '@nomiclabs/hardhat-waffle';
+import '@typechain/hardhat';
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.0",
+  defaultNetwork: "hardhat",
+  solidity: '0.8.0'
 };
 
-export default config
+export default config;
