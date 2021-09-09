@@ -1,0 +1,48 @@
+{
+  "name": "StarToken",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "npx hardhat test",
+    "lint": "./node_modules/.bin/solhint -f table contracts/**/*.sol",
+    "compile": "npx hardhat compile"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcoskichel/StarToken.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marcoskichel/StarToken/issues"
+  },
+  "homepage": "https://github.com/marcoskichel/StarToken#readme",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.2",
+    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "@typechain/ethers-v5": "^7.0.1",
+    "@typechain/hardhat": "^2.3.0",
+    "@types/chai": "^4.2.21",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^16.7.13",
+    "chai": "^4.3.4",
+    "ethereum-waffle": "^3.4.0",
+    "ethers": "^5.4.6",
+    "hardhat": "^2.6.3",
+    "prettier": "^2.3.2",
+    "prettier-plugin-solidity": "^1.0.0-beta.17",
+    "solhint": "^3.3.6",
+    "solhint-plugin-prettier": "0.0.5",
+    "ts-node": "^10.2.1",
+    "typechain": "^5.1.2",
+    "typescript": "^4.4.2"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.3.1"
+  }
+}
