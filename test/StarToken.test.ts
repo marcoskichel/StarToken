@@ -10,14 +10,14 @@ const initialSupply = 1000;
 describe('StarToken', () => {
   let starToken: StarToken;
   let signers: SignerWithAddress[];
-  let deployer: SignerWithAddress;
+  let owner: SignerWithAddress;
 
   beforeEach(async () => {
     signers = await ethers.getSigners();
-    deployer = signers[0];
+    owner = signers[0];
     const factory = await ethers.getContractFactory(
       'StarToken',
-      deployer
+      owner
     );
     starToken = <StarToken>await factory.deploy(initialSupply, []);
     await starToken.deployed();
@@ -28,8 +28,8 @@ describe('StarToken', () => {
       expect(await starToken.totalSupply()).to.equal(initialSupply);
     });
 
-    it('should assign the initial supply to the deployer wallet', async () => {
-      const deployerAddress = await deployer.getAddress();
+    it('should assign the initial supply to the owner wallet', async () => {
+      const deployerAddress = await owner.getAddress();
       const deployerBalance = await starToken.balanceOf(deployerAddress);
       const totalSupply = await starToken.totalSupply();
       expect(deployerBalance).to.equal(totalSupply);
@@ -38,14 +38,15 @@ describe('StarToken', () => {
 
   describe('mintInvestorReward', () => {
     it('should allow owner invocations', async () => {
-      const ownerAddress = await deployer.getAddress();
+      const ownerAddress = await owner.getAddress();
       await starToken.mintInvestorReward(ownerAddress, 2000, 2)
     });
 
     it('should not allow anyone else invocations', async () => {
-      const signerAddress = await signers[1].getAddress()
-      expect(starToken.mintInvestorReward(signerAddress, 2000, 2))
-        .to.be.revertedWith('Only the contract owner can invoke this function.');
+      const ownerAddress = await signers[1].getAddress()
+      await starToken.transferOwnership(ownerAddress)
+      await expect(starToken.mintInvestorReward(ownerAddress, 2000, 2))
+        .to.be.revertedWith('Ownable: caller is not the owner');
     });
 
     it('should generate the correct amount of tokens', async () => {
