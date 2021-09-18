@@ -8,23 +8,20 @@ import '@openzeppelin/contracts/access/Ownable.sol';
  * Implementation of the Star Token, a ERC20 token which is generated during crowdfundings
  **/
 contract StarToken is ERC20, Ownable {
-  constructor(uint256 initialSupply) ERC20('StarToken', 'STAR') {
+  constructor(uint256 initialSupply) public ERC20('StarToken', 'STAR') {
     // Mint the initialSupply and add it to the deployer wallet
     _mint(owner(), initialSupply);
   }
 
   /**
-   * Mint a reward and give it to the investor, only the contract owner is allowed to invoke.
-   * @param investorAddress The investor wallet address
-   * @param investedAmount The value of the funds raised by the investor
-   * @param proposalScore The student proposal score
+   * Mint a given amount of tokens and add it to the given account.
+   * @param account The destination account address
+   * @param rewardedAmount The invested amount
    **/
-  function mintInvestorReward(
-    address investorAddress,
-    uint256 investedAmount,
-    uint256 proposalScore
-  ) public onlyOwner {
-    uint256 rewardedAmount = (investedAmount * proposalScore) / totalSupply();
-    _mint(investorAddress, rewardedAmount);
+  function mint(address payable account, uint256 rewardedAmount)
+    public
+    onlyOwner
+  {
+    _mint(account, rewardedAmount);
   }
 }

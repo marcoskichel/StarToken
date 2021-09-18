@@ -36,21 +36,17 @@ describe('StarToken', () => {
     });
   });
 
-  describe('mintInvestorReward', () => {
+  describe('mint', () => {
     it('should allow owner invocations', async () => {
       const ownerAddress = await owner.getAddress();
-      await starToken.mintInvestorReward(ownerAddress, 2000, 2)
+      await starToken.mint(ownerAddress, 2000, 2)
     });
 
     it('should not allow anyone else invocations', async () => {
       const ownerAddress = await signers[1].getAddress()
       await starToken.transferOwnership(ownerAddress)
-      await expect(starToken.mintInvestorReward(ownerAddress, 2000, 2))
+      await expect(starToken.mint(ownerAddress, 2000, 2))
         .to.be.revertedWith('Ownable: caller is not the owner');
-    });
-
-    it('should generate the correct amount of tokens', async () => {
-      // TODO: Once the formula is defined, implement this
     });
   });
 });
