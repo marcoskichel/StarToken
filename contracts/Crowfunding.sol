@@ -10,9 +10,6 @@ import './MintableERC20.sol';
 contract Crowdfunding is Ownable, ReentrancyGuard {
   using Address for address payable;
 
-  /** @dev The amount of decimals in one ether */
-  uint256 public constant ETHER_IN_WEI = 1000000000000000000;
-
   /** @dev The target token of this crowdfunding */
   MintableERC20 private immutable token;
 
@@ -35,17 +32,17 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
   bool public isFinalized;
 
   constructor(
-    uint256 _etherInvestmentObjective,
+    uint256 _weiObjective,
     MintableERC20 _token,
     address payable _beneficiary,
     uint256 _weiTokenPrice
   ) {
-    require(_etherInvestmentObjective > 0, 'Objective should be a positive.');
+    require(_weiObjective > 0, 'Objective should be a positive.');
     require(_weiTokenPrice > 0, 'Token price should be positive.');
 
     token = _token;
     beneficiary = _beneficiary;
-    weiObjective = _etherInvestmentObjective * ETHER_IN_WEI;
+    weiObjective = _weiObjective;
     isFinalized = false;
     weiTokenPrice = _weiTokenPrice;
   }
@@ -76,6 +73,8 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
     emit InvestmentRewarded(investorWallet, reward);
   }
 
+  event Invested(address indexed wallet, uint256 value);
+
   /**
    * @dev Invest an amount of wei into this crowdfunding instance
    */
@@ -83,15 +82,17 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
     require(!isFinalized, 'Crowdfunding is finalized.');
 
     address payable investorWallet = payable(msg.sender);
-    uint256 investmentWeiValue = msg.value;
+    uint256 weiValue = msg.value;
 
-    require(investmentWeiValue > 0, 'Investments should be positive.');
+    require(weiValue > 0, 'Investments should be positive.');
 
-    investments[investorWallet] += investmentWeiValue;
-    totalInvestedWei += investmentWeiValue;
+    investments[investorWallet] += weiValue;
+    totalInvestedWei += weiValue;
 
-    if (investmentWeiValue >= weiObjective) {
-      finalize();
+    emit Invested(investorWallet, weiValue);
+
+    if (totalInvestedWei >= weiObjective) {
+      isFinalized = true;
     }
   }
 

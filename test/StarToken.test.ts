@@ -39,13 +39,13 @@ describe('StarToken', () => {
   describe('mint', () => {
     it('should allow owner invocations', async () => {
       const ownerAddress = await owner.getAddress();
-      await starToken.mint(ownerAddress, 2000, 2)
+      await starToken.mint(ownerAddress, 2000);
     });
 
     it('should not allow anyone else invocations', async () => {
-      const ownerAddress = await signers[1].getAddress()
-      await starToken.transferOwnership(ownerAddress)
-      await expect(starToken.mint(ownerAddress, 2000, 2))
+      const ownerAddress = await signers[1].getAddress();
+      await starToken.transferOwnership(ownerAddress);
+      await expect(starToken.mint(ownerAddress, 2000))
         .to.be.revertedWith('Ownable: caller is not the owner');
     });
   });
