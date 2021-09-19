@@ -2,28 +2,31 @@
 pragma solidity ^0.8.0;
 
 import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
-import '@openzeppelin/contracts/access/Ownable.sol';
-import './MintableERC20.sol';
+import '@openzeppelin/contracts/access/AccessControl.sol';
 
 /**
  * @dev Implementation of the Star Token, a ERC20 token which is generated during crowdfundings
  **/
-contract StarToken is Ownable, MintableERC20 {
-  constructor(uint256 initialSupply) ERC20('StarToken', 'STAR') {
-    // Mint the initialSupply and add it to the deployer wallet
-    _mint(owner(), initialSupply);
+contract StarToken is ERC20, AccessControl {
+  bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+  bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
+
+  constructor(address owner, uint256 initialSupply) ERC20('StarToken', 'STAR') {
+    _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    _mint(owner, initialSupply);
   }
 
-  /**
-   * @dev Mint a given amount of tokens and add it to the given account.
-   * @param account The destination account address
-   * @param amount The invested amount
-   **/
-  function mint(address payable account, uint256 amount)
-    public
-    override
-    onlyOwner
-  {
-    super.mint(account, amount);
+  event Minted(address indexed to, uint256 amount);
+
+  function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) {
+    _mint(to, amount);
+    emit Minted(to, amount);
+  }
+
+  event Burned(address indexed from, uint256 amount);
+
+  function burn(address from, uint256 amount) public onlyRole(BURNER_ROLE) {
+    _burn(from, amount);
+    emit Burned(from, amount);
   }
 }

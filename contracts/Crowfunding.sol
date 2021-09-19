@@ -5,13 +5,15 @@ import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '@openzeppelin/contracts/utils/Address.sol';
 import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
-import './MintableERC20.sol';
+import './StarToken.sol';
 
 contract Crowdfunding is Ownable, ReentrancyGuard {
   using Address for address payable;
 
+  enum CrowdfundingStatus { IN_PROGRESS, SUCCESS, FAIL}
+
   /** @dev The target token of this crowdfunding */
-  MintableERC20 private immutable token;
+  StarToken private immutable token;
 
   /** @dev The price of one token in wei **/
   uint256 public immutable weiTokenPrice;
@@ -28,12 +30,12 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
   /** @dev A dictionary binding the investor wallets with the respective invested value */
   mapping(address => uint256) private investments;
 
-  /** @dev Whether this crowdfunding is finalized */
-  bool public isFinalized;
+  /** @dev The current state of this crowdfunding */
+  CrowdfundingStatus public status;
 
   constructor(
     uint256 _weiObjective,
-    MintableERC20 _token,
+    StarToken _token,
     address payable _beneficiary,
     uint256 _weiTokenPrice
   ) {
@@ -43,7 +45,7 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
     token = _token;
     beneficiary = _beneficiary;
     weiObjective = _weiObjective;
-    isFinalized = false;
+    status = CrowdfundingStatus.IN_PROGRESS;
     weiTokenPrice = _weiTokenPrice;
   }
 
@@ -63,10 +65,13 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
    * @dev Infer the value of a reward and mint it directly into the investor wallet
    */
   function claimReward() public nonReentrant {
-    require(isFinalized, 'Crowdfund still in progress.');
+    require(status == CrowdfundingStatus.SUCCESS, 'No rewards available.');
 
     address payable investorWallet = payable(msg.sender);
     uint256 investment = investments[investorWallet];
+
+    require(investment > 0, 'No reward available for this address.');
+
     uint256 reward = calculateReward(investment);
 
     token.mint(investorWallet, reward);
@@ -79,7 +84,7 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
    * @dev Invest an amount of wei into this crowdfunding instance
    */
   function invest() public payable nonReentrant {
-    require(!isFinalized, 'Crowdfunding is finalized.');
+    require(status == CrowdfundingStatus.IN_PROGRESS, 'Crowdfunding is finalized.');
 
     address payable investorWallet = payable(msg.sender);
     uint256 weiValue = msg.value;
@@ -92,44 +97,47 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
     emit Invested(investorWallet, weiValue);
 
     if (totalInvestedWei >= weiObjective) {
-      isFinalized = true;
+      _finalize();
     }
   }
 
-  function validateLeafOperation() private view {
-    require(isFinalized, 'Crowdfunding still in progress.');
-    require(totalInvestedWei > 0, 'Already withdrawn.');
-  }
-
-  event Withdrawn(address indexed _address, uint256 weiAmount);
+  event InvestmentWithdrawn(address indexed _address, uint256 weiAmount);
 
   function withdraw() public nonReentrant {
-    validateLeafOperation();
+    require(status == CrowdfundingStatus.SUCCESS, 'Unable to withdraw.');
+    require(totalInvestedWei > 0, 'Already withdrawn.');
 
-    totalInvestedWei = 0;
     beneficiary.sendValue(totalInvestedWei);
-
-    emit Withdrawn(beneficiary, totalInvestedWei);
+    emit InvestmentWithdrawn(beneficiary, totalInvestedWei);
+    totalInvestedWei = 0;
   }
 
-  event Finalized(address indexed _beneficiary);
+  event Finalized(address indexed _beneficiary, CrowdfundingStatus status);
 
   function finalize() public onlyOwner {
-    isFinalized = true;
-    emit Finalized(beneficiary);
+    _finalize();
   }
 
-  event Refunded(address indexed _wallet, uint256 weiAmount);
+  function _finalize() private {
+    status = totalInvestedWei >= weiObjective
+      ? CrowdfundingStatus.SUCCESS
+      : CrowdfundingStatus.FAIL;
+    emit Finalized(beneficiary, status);
+  }
+
+  event InvestmentRefunded(address indexed _wallet, uint256 weiAmount);
 
   function refund() public nonReentrant {
-    validateLeafOperation();
+    require(status == CrowdfundingStatus.FAIL, 'Unable to refund.');
 
     address payable wallet = payable(msg.sender);
     uint256 value = investments[wallet];
 
+    require(investments[wallet] > 0, 'No investments found for this address.');
+
     totalInvestedWei -= value;
     wallet.sendValue(value);
 
-    emit Refunded(wallet, value);
+    emit InvestmentRefunded(wallet, value);
   }
 }
