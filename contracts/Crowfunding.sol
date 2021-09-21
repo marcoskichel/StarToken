@@ -2,7 +2,6 @@
 pragma solidity ^0.8.0;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
-import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '@openzeppelin/contracts/utils/Address.sol';
 import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import './StarToken.sol';
@@ -10,7 +9,11 @@ import './StarToken.sol';
 contract Crowdfunding is Ownable, ReentrancyGuard {
   using Address for address payable;
 
-  enum CrowdfundingStatus { IN_PROGRESS, SUCCESS, FAIL}
+  enum CrowdfundingStatus {
+    IN_PROGRESS,
+    SUCCESS,
+    FAIL
+  }
 
   /** @dev The target token of this crowdfunding */
   StarToken private immutable token;
@@ -20,6 +23,9 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
 
   /** @dev The objective total wei of this crowdfunding instance */
   uint256 public immutable weiObjective;
+
+  /** @dev The minimum objective total wei of this crowdfunding instance */
+  uint256 public immutable weiMinObjective;
 
   /** @dev The beneficiary wallet address */
   address payable public immutable beneficiary;
@@ -35,6 +41,7 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
 
   constructor(
     uint256 _weiObjective,
+    uint256 _weiMinObjective,
     StarToken _token,
     address payable _beneficiary,
     uint256 _weiTokenPrice
@@ -45,6 +52,7 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
     token = _token;
     beneficiary = _beneficiary;
     weiObjective = _weiObjective;
+    weiMinObjective = _weiMinObjective;
     status = CrowdfundingStatus.IN_PROGRESS;
     weiTokenPrice = _weiTokenPrice;
   }
@@ -84,7 +92,10 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
    * @dev Invest an amount of wei into this crowdfunding instance
    */
   function invest() public payable nonReentrant {
-    require(status == CrowdfundingStatus.IN_PROGRESS, 'Crowdfunding is finalized.');
+    require(
+      status == CrowdfundingStatus.IN_PROGRESS,
+      'Crowdfunding is finalized.'
+    );
 
     address payable investorWallet = payable(msg.sender);
     uint256 weiValue = msg.value;
@@ -119,7 +130,7 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
   }
 
   function _finalize() private {
-    status = totalInvestedWei >= weiObjective
+    status = totalInvestedWei >= weiMinObjective
       ? CrowdfundingStatus.SUCCESS
       : CrowdfundingStatus.FAIL;
     emit Finalized(beneficiary, status);

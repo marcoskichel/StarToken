@@ -32,7 +32,7 @@ describe('Crowdfunding', () => {
     await starToken.deployed();
     const beneficiaryAddress = await beneficiary.getAddress();
     crowdfunding = <Crowdfunding>await crowdfundingFactory
-      .deploy(parseEther('2'), starToken.address, beneficiaryAddress, 2);
+      .deploy(parseEther('2'), parseEther('1.5'), starToken.address, beneficiaryAddress, 2);
     await crowdfunding.deployed();
     await starToken.grantRole(await starToken.MINTER_ROLE(), crowdfunding.address);
     await starToken.grantRole(await starToken.BURNER_ROLE(), crowdfunding.address);
@@ -81,13 +81,13 @@ describe('Crowdfunding', () => {
   });
 
   describe('finalize', () => {
-    it('should finalized as successful if investment is equal the objective', async () => {
-      await crowdfunding.invest({ value: parseEther('2') })
+    it('should finalized as successful if investment is equal the min objective', async () => {
+      await crowdfunding.invest({ value: parseEther('1.5') })
       await crowdfunding.finalize();
       expect(await crowdfunding.status()).to.eq(1);
     });
 
-    it('should finalized as successful if investment is higher than the objective', async () => {
+    it('should finalized as successful if investment is higher than the min objective', async () => {
       await crowdfunding.invest({ value: parseEther('3') })
       await crowdfunding.finalize();
       expect(await crowdfunding.status()).to.eq(1);
