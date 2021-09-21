@@ -32,7 +32,13 @@ describe('Crowdfunding', () => {
     await starToken.deployed();
     const beneficiaryAddress = await beneficiary.getAddress();
     crowdfunding = <Crowdfunding>await crowdfundingFactory
-      .deploy(parseEther('2'), parseEther('1.5'), starToken.address, beneficiaryAddress, 2);
+      .deploy(
+        parseEther('2'),
+        parseEther('1.5'),
+        starToken.address,
+        beneficiaryAddress,
+        2
+      );
     await crowdfunding.deployed();
     await starToken.grantRole(await starToken.MINTER_ROLE(), crowdfunding.address);
     await starToken.grantRole(await starToken.BURNER_ROLE(), crowdfunding.address);
@@ -82,13 +88,13 @@ describe('Crowdfunding', () => {
 
   describe('finalize', () => {
     it('should finalized as successful if investment is equal the min objective', async () => {
-      await crowdfunding.invest({ value: parseEther('1.5') })
+      await crowdfunding.invest({ value: parseEther('1.5') });
       await crowdfunding.finalize();
       expect(await crowdfunding.status()).to.eq(1);
     });
 
     it('should finalized as successful if investment is higher than the min objective', async () => {
-      await crowdfunding.invest({ value: parseEther('3') })
+      await crowdfunding.invest({ value: parseEther('3') });
       await crowdfunding.finalize();
       expect(await crowdfunding.status()).to.eq(1);
     });
@@ -103,6 +109,28 @@ describe('Crowdfunding', () => {
       await crowdfunding.finalize();
       await expect(crowdfunding.connect(investor).finalize())
         .to.be.revertedWith('Ownable: caller is not the owner');
+    });
+
+    describe('Platform Reward', () => {
+      it('should mint a reward if crowdfunding succeeds', async () => {
+        const [investor] = investors;
+        await expect(crowdfunding.connect(investor).invest({ value: parseEther('2') }))
+          .to.emit(crowdfunding, 'PlatformRewarded')
+          .withArgs(await owner.getAddress(), parseEther('0.05'));
+      });
+
+      it('should not mint a reward if crowdfunding fails', async () => {
+        await expect(crowdfunding.connect(owner).finalize())
+          .to.not.emit(crowdfunding, 'PlatformRewarded');
+      });
+
+      it('should mint the reward on the owner wallet', async () => {
+        const [investor] = investors;
+        const initialBalance = await starToken.balanceOf(await owner.getAddress());
+        await crowdfunding.connect(investor).invest({ value: parseEther('2') })
+        expect(await starToken.balanceOf(await owner.getAddress()))
+          .to.eq(initialBalance.add(parseEther('0.05')))
+      });
     });
   });
 

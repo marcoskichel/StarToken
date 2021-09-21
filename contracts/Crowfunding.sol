@@ -129,11 +129,22 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
     _finalize();
   }
 
+  event PlatformRewarded(address indexed platformWallet, uint256 amount);
+
+  function mintPlatformReward() private {
+    uint256 amount = calculateReward(totalInvestedWei) / 20;
+    token.mint(owner(), amount);
+    emit PlatformRewarded(owner(), amount);
+  }
+
   function _finalize() private {
     status = totalInvestedWei >= weiMinObjective
       ? CrowdfundingStatus.SUCCESS
       : CrowdfundingStatus.FAIL;
     emit Finalized(beneficiary, status);
+    if (status == CrowdfundingStatus.SUCCESS) {
+      mintPlatformReward();
+    }
   }
 
   event InvestmentRefunded(address indexed _wallet, uint256 weiAmount);
