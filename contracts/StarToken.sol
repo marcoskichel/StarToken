@@ -19,15 +19,31 @@ contract StarToken is ERC20, AccessControl {
     _mint(owner, initialSupply);
   }
 
+  /**
+   * @dev An event that carry information about a token mintage
+   * @param to The wallet to where the minted tokens was allocated
+   * @param amount The amount of tokens minted
+   */
   event Minted(address indexed to, uint256 amount);
 
+  /**
+   * @dev Mint coins and send it to a given wallet
+   */
   function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) {
     _mint(to, amount);
     emit Minted(to, amount);
   }
 
+  /**
+   * @dev An event that carry information about a token burn
+   * @param from The wallet from which the tokens were burn
+   * @param amount The amount of tokens burn
+   */
   event Burned(address indexed from, uint256 amount);
 
+  /**
+   * @dev Burn coins from a given wallet
+   */
   function burn(address from, uint256 amount) public onlyRole(BURNER_ROLE) {
     _burn(from, amount);
     emit Burned(from, amount);

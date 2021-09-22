@@ -6,6 +6,15 @@ import '@openzeppelin/contracts/utils/Address.sol';
 import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import './StarToken.sol';
 
+/**
+ * @dev Representation of a crowdfunding for a student proposal.
+ *
+ * This contract when deployed allow investors to fund a student proposal and get
+ * rewarded with Star tokens.
+ *
+ * In case of the crowdfunding not reaching the minimum wei objetive it also handles
+ * refunding the investors.
+ */
 contract Crowdfunding is Ownable, ReentrancyGuard {
   using Address for address payable;
 
@@ -58,7 +67,7 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
   }
 
   /**
-   * @dev Calculates the number of rewarded tokens
+   * @dev Calculates the number of rewarded tokens generated upon a investment of wei
    */
   function calculateReward(uint256 _weiAmount) internal view returns (uint256) {
     return _weiAmount / weiTokenPrice;
@@ -70,7 +79,7 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
   event InvestmentRewarded(address indexed investorWallet, uint256 reward);
 
   /**
-   * @dev Infer the value of a reward and mint it directly into the investor wallet
+   * @dev Mint the reward for previously made investments and send it to the wallet of the claimer
    */
   function claimReward() public nonReentrant {
     require(status == CrowdfundingStatus.SUCCESS, 'No rewards available.');
@@ -86,7 +95,12 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
     emit InvestmentRewarded(investorWallet, reward);
   }
 
-  event Invested(address indexed wallet, uint256 value);
+  /**
+   * @dev A event that carry information about a wei investment made in this contract
+   * @param wallet The wallet of the investor
+   * @param weiAmount The invested wei amount
+   */
+  event Invested(address indexed wallet, uint256 weiAmount);
 
   /**
    * @dev Invest an amount of wei into this crowdfunding instance
@@ -112,8 +126,17 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
     }
   }
 
+  /**
+   * @dev A event that carry information about wei withdraws made by the student
+   * @param wallet The wallet of the contract beneficiary
+   * @param amount The amount of wei withdrawn
+   */
   event InvestmentWithdrawn(address indexed _address, uint256 weiAmount);
 
+  /**
+   * @dev Withdraw the wei investment of a successful crowdfunding instance to
+   * the wallet of the beneficiary student
+   */
   function withdraw() public nonReentrant {
     require(status == CrowdfundingStatus.SUCCESS, 'Unable to withdraw.');
     require(totalInvestedWei > 0, 'Already withdrawn.');
@@ -123,14 +146,31 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
     totalInvestedWei = 0;
   }
 
+  /**
+   * @dev A event that carry information about the finalization act of this instance
+   * @param wallet The wallet of the contract beneficiary
+   * @param amount The inferred final status of the contract
+   */
   event Finalized(address indexed _beneficiary, CrowdfundingStatus status);
 
+  /**
+   * @dev Finalize this crowdfunding contract, inferring its final status and allowing for
+   * withdraws, reward claims, and refundings
+   */
   function finalize() public onlyOwner {
     _finalize();
   }
 
-  event PlatformRewarded(address indexed platformWallet, uint256 amount);
+  /**
+   * @dev A event that carry information about a reward minted for the contract owner wallet
+   * @param wallet The wallet of the contract owner
+   * @param amount The amount of tokens rewarded
+   */
+  event PlatformRewarded(address indexed wallet, uint256 amount);
 
+  /**
+   * @dev Mints a token reward to the contract owner wallet
+   */
   function mintPlatformReward() private {
     uint256 amount = calculateReward(totalInvestedWei) / 20;
     token.mint(owner(), amount);
@@ -147,8 +187,14 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
     }
   }
 
+  /**
+   * @dev A event that carry information about a refunding made to a investor
+   */
   event InvestmentRefunded(address indexed _wallet, uint256 weiAmount);
 
+  /**
+   * @dev Refunds all the wei invested by an investor to its wallet
+   */
   function refund() public nonReentrant {
     require(status == CrowdfundingStatus.FAIL, 'Unable to refund.');
 
