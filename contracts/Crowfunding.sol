@@ -78,7 +78,7 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
     address payable investorWallet = payable(msg.sender);
     uint256 investment = investments[investorWallet];
 
-    require(investment > 0, 'No reward available for this address.');
+    require(investment > 0, 'No reward for address.');
 
     uint256 reward = calculateReward(investment);
 
@@ -155,7 +155,7 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
     address payable wallet = payable(msg.sender);
     uint256 value = investments[wallet];
 
-    require(investments[wallet] > 0, 'No investments found for this address.');
+    require(investments[wallet] > 0, 'No investments for address.');
 
     totalInvestedWei -= value;
     wallet.sendValue(value);
