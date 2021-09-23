@@ -147,7 +147,7 @@ describe('Crowdfunding', () => {
       const [investor, noRewardInvestor] = investors;
       await crowdfunding.connect(investor).invest({ value: parseEther('2') });
       await expect(crowdfunding.connect(noRewardInvestor).claimReward())
-        .to.be.revertedWith('No reward available for this address.');
+        .to.be.revertedWith('No reward for address.');
     });
 
     it('should revert if crowdfunding still in progress', async () => {
@@ -187,7 +187,7 @@ describe('Crowdfunding', () => {
       await crowdfunding.connect(investor).invest({ value: parseEther('1') });
       await crowdfunding.connect(owner).finalize();
       await expect(crowdfunding.connect(notInvestor).refund())
-        .to.be.revertedWith('No investments found for this address.');
+        .to.be.revertedWith('No investments for address.');
     });
 
     it('should revert if crowdfunding still in progress', async () => {

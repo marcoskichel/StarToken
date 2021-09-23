@@ -16,7 +16,8 @@ const config: HardhatUserConfig = {
   },
   gasReporter: {
     currency: 'USD',
-    coinmarketcap: '30817f21-955c-4cc0-827e-9ef11f3ae6b6'
+    coinmarketcap: '30817f21-955c-4cc0-827e-9ef11f3ae6b6',
+    gasPrice: 6.478
   }
 };
 

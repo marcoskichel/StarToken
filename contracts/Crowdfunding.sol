@@ -129,9 +129,9 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
   /**
    * @dev A event that carry information about wei withdraws made by the student
    * @param wallet The wallet of the contract beneficiary
-   * @param amount The amount of wei withdrawn
+   * @param weiAmount The amount of wei withdrawn
    */
-  event InvestmentWithdrawn(address indexed _address, uint256 weiAmount);
+  event InvestmentWithdrawn(address indexed wallet, uint256 weiAmount);
 
   /**
    * @dev Withdraw the wei investment of a successful crowdfunding instance to
@@ -148,10 +148,10 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
 
   /**
    * @dev A event that carry information about the finalization act of this instance
-   * @param wallet The wallet of the contract beneficiary
-   * @param amount The inferred final status of the contract
+   * @param beneficiaryWallet The wallet of the contract beneficiary
+   * @param status The inferred final status of the contract
    */
-  event Finalized(address indexed _beneficiary, CrowdfundingStatus status);
+  event Finalized(address indexed beneficiaryWallet, CrowdfundingStatus status);
 
   /**
    * @dev Finalize this crowdfunding contract, inferring its final status and allowing for
