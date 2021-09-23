@@ -5,6 +5,7 @@ import "@typechain/hardhat";
 import "hardhat-gas-reporter"
 import "@nomiclabs/hardhat-ethers";
 import "hardhat-deploy";
+import "solidity-coverage";
 
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
