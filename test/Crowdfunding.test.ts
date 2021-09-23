@@ -13,12 +13,15 @@ describe('Crowdfunding', () => {
   let owner: SignerWithAddress;
   let beneficiary: SignerWithAddress;
   let investors: SignerWithAddress[];
+  let devTeam: SignerWithAddress;
+  let finalizerRole: string;
 
   beforeEach(async () => {
     signers = await ethers.getSigners();
     owner = signers[0];
     beneficiary = signers[1];
     investors = [signers[2], signers[3]];
+    devTeam = signers[4];
     const starTokenFactory = await ethers.getContractFactory(
       'StarToken',
       owner
@@ -37,11 +40,14 @@ describe('Crowdfunding', () => {
         parseEther('1.5'),
         starToken.address,
         beneficiaryAddress,
-        2
+        2,
+        await devTeam.getAddress()
       );
     await crowdfunding.deployed();
     await starToken.grantRole(await starToken.MINTER_ROLE(), crowdfunding.address);
     await starToken.grantRole(await starToken.BURNER_ROLE(), crowdfunding.address);
+    finalizerRole = await crowdfunding.FINALIZER_ROLE();
+    await crowdfunding.grantRole(finalizerRole, await owner.getAddress());
   });
 
   describe('invest', () => {
@@ -104,11 +110,11 @@ describe('Crowdfunding', () => {
       await expect(crowdfunding.finalize()).to.emit(crowdfunding, 'Finalized');
     });
 
-    it('should allow only the contract owner to invoke', async () => {
+    it('should allow only the address with the FINALIZER_ROLE to invoke', async () => {
       const [investor] = investors;
       await crowdfunding.finalize();
       await expect(crowdfunding.connect(investor).finalize())
-        .to.be.revertedWith('Ownable: caller is not the owner');
+        .to.be.reverted;
     });
 
     describe('Platform Reward', () => {
@@ -116,7 +122,7 @@ describe('Crowdfunding', () => {
         const [investor] = investors;
         await expect(crowdfunding.connect(investor).invest({ value: parseEther('2') }))
           .to.emit(crowdfunding, 'PlatformRewarded')
-          .withArgs(await owner.getAddress(), parseEther('0.05'));
+          .withArgs(await devTeam.getAddress(), parseEther('0.05'));
       });
 
       it('should not mint a reward if crowdfunding fails', async () => {
@@ -124,12 +130,11 @@ describe('Crowdfunding', () => {
           .to.not.emit(crowdfunding, 'PlatformRewarded');
       });
 
-      it('should mint the reward on the owner wallet', async () => {
+      it('should mint the reward on the dev team wallet', async () => {
         const [investor] = investors;
-        const initialBalance = await starToken.balanceOf(await owner.getAddress());
         await crowdfunding.connect(investor).invest({ value: parseEther('2') })
-        expect(await starToken.balanceOf(await owner.getAddress()))
-          .to.eq(initialBalance.add(parseEther('0.05')))
+        expect(await starToken.balanceOf(await devTeam.getAddress()))
+          .to.eq(parseEther('0.05'))
       });
     });
   });

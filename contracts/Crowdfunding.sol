@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-import '@openzeppelin/contracts/access/Ownable.sol';
+import '@openzeppelin/contracts/access/AccessControl.sol';
 import '@openzeppelin/contracts/utils/Address.sol';
 import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import './StarToken.sol';
@@ -15,8 +15,10 @@ import './StarToken.sol';
  * In case of the crowdfunding not reaching the minimum wei objetive it also handles
  * refunding the investors.
  */
-contract Crowdfunding is Ownable, ReentrancyGuard {
+contract Crowdfunding is AccessControl, ReentrancyGuard {
   using Address for address payable;
+
+  bytes32 public constant FINALIZER_ROLE = keccak256('FINALIZER_ROLE');
 
   enum CrowdfundingStatus {
     IN_PROGRESS,
@@ -48,15 +50,21 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
   /** @dev The current state of this crowdfunding */
   CrowdfundingStatus public status;
 
+  /** @dev The development team wallet address */
+  address payable public immutable devTeamWallet;
+
   constructor(
     uint256 _weiObjective,
     uint256 _weiMinObjective,
     StarToken _token,
     address payable _beneficiary,
-    uint256 _weiTokenPrice
+    uint256 _weiTokenPrice,
+    address payable _devTeamWallet
   ) {
     require(_weiObjective > 0, 'Objective should be a positive.');
     require(_weiTokenPrice > 0, 'Token price should be positive.');
+
+    _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
 
     token = _token;
     beneficiary = _beneficiary;
@@ -64,6 +72,7 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
     weiMinObjective = _weiMinObjective;
     status = CrowdfundingStatus.IN_PROGRESS;
     weiTokenPrice = _weiTokenPrice;
+    devTeamWallet = _devTeamWallet;
   }
 
   /**
@@ -157,7 +166,7 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
    * @dev Finalize this crowdfunding contract, inferring its final status and allowing for
    * withdraws, reward claims, and refundings
    */
-  function finalize() public onlyOwner {
+  function finalize() public onlyRole(FINALIZER_ROLE) {
     _finalize();
   }
 
@@ -169,12 +178,12 @@ contract Crowdfunding is Ownable, ReentrancyGuard {
   event PlatformRewarded(address indexed wallet, uint256 amount);
 
   /**
-   * @dev Mints a token reward to the contract owner wallet
+   * @dev Mints a token reward to the development team wallet
    */
   function mintPlatformReward() private {
     uint256 amount = calculateReward(totalInvestedWei) / 20;
-    token.mint(owner(), amount);
-    emit PlatformRewarded(owner(), amount);
+    token.mint(devTeamWallet, amount);
+    emit PlatformRewarded(devTeamWallet, amount);
   }
 
   function _finalize() private {

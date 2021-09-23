@@ -43,14 +43,18 @@ contract CrowdfundingDeployer is Ownable, ReentrancyGuard {
    * @dev Event representing a deployed crowdfunding instance
    * @param weiObjective The objective of the crowdfunding in wei
    * @param weiMinObjective The minimum objective of the crowdfunding in wei
+   * @param token The contract token
    * @param beneficiary The crowdfunding beneficiary wallet address
-   * @param beneficiary The token price of a Star Token in wei for the deployed contract
+   * @param weiTokenPrice The token price of a Star Token in wei for the deployed contract
+   * @param devTeamWallet The development team wallet address
    */
   event CrowdfundingDeployed(
     uint256 weiObjective,
     uint256 weiMinObjective,
+    StarToken token,
     address payable beneficiary,
-    uint256 weiTokenPrice
+    uint256 weiTokenPrice,
+    address payable devTeamWallet
   );
 
   /**
@@ -58,13 +62,15 @@ contract CrowdfundingDeployer is Ownable, ReentrancyGuard {
    * @param weiObjective The objective of the crowdfunding in wei
    * @param weiMinObjective The minimum objective of the crowdfunding in wei
    * @param beneficiary The crowdfunding beneficiary wallet address
-   * @param beneficiary The token price of a Star Token in wei for the deployed contract
+   * @param weiTokenPrice The token price of a Star Token in wei for the deployed contract
+   * @param devTeamWallet The development team wallet address
    */
   function deployNewCrowdfunding(
     uint256 weiObjective,
     uint256 weiMinObjective,
     address payable beneficiary,
-    uint256 weiTokenPrice
+    uint256 weiTokenPrice,
+    address payable devTeamWallet
   ) public onlyOwner nonReentrant {
     validateCrowdfundingDeploy(beneficiary);
     Crowdfunding instance = new Crowdfunding(
@@ -72,14 +78,17 @@ contract CrowdfundingDeployer is Ownable, ReentrancyGuard {
       weiMinObjective,
       token,
       beneficiary,
-      weiTokenPrice
+      weiTokenPrice,
+      devTeamWallet
     );
     instances[beneficiary].push(address(instance));
     emit CrowdfundingDeployed(
       weiObjective,
       weiMinObjective,
+      token,
       beneficiary,
-      weiTokenPrice
+      weiTokenPrice,
+      devTeamWallet
     );
   }
 }

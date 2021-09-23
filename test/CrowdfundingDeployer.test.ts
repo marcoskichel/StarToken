@@ -13,13 +13,15 @@ describe('CrowdfundingDeployer', () => {
   let owner: SignerWithAddress;
   let beneficiary: SignerWithAddress;
   let existingBeneficiary: SignerWithAddress;
+  let devTeam: SignerWithAddress;
 
   const deploy = async (address: string) => {
     return deployer.deployNewCrowdfunding(
       parseEther('2'),
       parseEther('1.5'),
       address,
-      2
+      2,
+      await devTeam.getAddress()
     );
   };
 
@@ -28,6 +30,7 @@ describe('CrowdfundingDeployer', () => {
     owner = signers[0];
     beneficiary = signers[1];
     existingBeneficiary = signers[2];
+    devTeam = signers[3];
     const starTokenFactory = await ethers.getContractFactory(
       'StarToken',
       owner
@@ -52,8 +55,10 @@ describe('CrowdfundingDeployer', () => {
         .withArgs(
           parseEther('2'),
           parseEther('1.5'),
+          starToken.address,
           beneficiaryAddress,
-          2
+          2,
+          await devTeam.getAddress()
         );
     });
 
