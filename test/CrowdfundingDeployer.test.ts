@@ -1,7 +1,7 @@
 import { expect, use } from 'chai';
 import { CrowdfundingDeployer, StarToken } from '../typechain';
 import { ethers, waffle } from 'hardhat';
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
+import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signers';
 import { parseEther } from 'ethers/lib/utils';
 
 use(waffle.solidity);
@@ -39,10 +39,13 @@ describe('CrowdfundingDeployer', () => {
       'CrowdfundingDeployer',
       owner
     );
-    starToken = <StarToken>await starTokenFactory
-      .deploy(await owner.getAddress(), parseEther('10'));
+    starToken = <StarToken>(
+      await starTokenFactory.deploy(await owner.getAddress(), parseEther('10'))
+    );
     await starToken.deployed();
-    deployer = <CrowdfundingDeployer>await deployerFactory.deploy(starToken.address);
+    deployer = <CrowdfundingDeployer>(
+      await deployerFactory.deploy(starToken.address)
+    );
     await deployer.deployed();
     await deploy(await existingBeneficiary.getAddress());
   });

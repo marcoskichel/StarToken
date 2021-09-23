@@ -1,7 +1,7 @@
 import { expect, use } from 'chai';
 import { Crowdfunding, StarToken } from '../typechain';
 import { ethers, waffle } from 'hardhat';
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
+import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signers';
 import { parseEther } from 'ethers/lib/utils';
 
 use(waffle.solidity);
@@ -30,22 +30,30 @@ describe('Crowdfunding', () => {
       'Crowdfunding',
       owner
     );
-    starToken = <StarToken>await starTokenFactory
-      .deploy(await owner.getAddress(), parseEther('10'));
+    starToken = <StarToken>(
+      await starTokenFactory.deploy(await owner.getAddress(), parseEther('10'))
+    );
     await starToken.deployed();
     const beneficiaryAddress = await beneficiary.getAddress();
-    crowdfunding = <Crowdfunding>await crowdfundingFactory
-      .deploy(
+    crowdfunding = <Crowdfunding>(
+      await crowdfundingFactory.deploy(
         parseEther('2'),
         parseEther('1.5'),
         starToken.address,
         beneficiaryAddress,
         2,
         await devTeam.getAddress()
-      );
+      )
+    );
     await crowdfunding.deployed();
-    await starToken.grantRole(await starToken.MINTER_ROLE(), crowdfunding.address);
-    await starToken.grantRole(await starToken.BURNER_ROLE(), crowdfunding.address);
+    await starToken.grantRole(
+      await starToken.MINTER_ROLE(),
+      crowdfunding.address
+    );
+    await starToken.grantRole(
+      await starToken.BURNER_ROLE(),
+      crowdfunding.address
+    );
     finalizerRole = await crowdfunding.FINALIZER_ROLE();
     await crowdfunding.grantRole(finalizerRole, await owner.getAddress());
   });
@@ -61,13 +69,16 @@ describe('Crowdfunding', () => {
     it('should not allow investments on finalized instances', async () => {
       const [investor] = investors;
       await crowdfunding.connect(owner).finalize();
-      await expect(crowdfunding.connect(investor).invest({ value: parseEther('1') }))
-        .to.be.revertedWith('Crowdfunding is finalized.');
+      await expect(
+        crowdfunding.connect(investor).invest({ value: parseEther('1') })
+      ).to.be.revertedWith('Crowdfunding is finalized.');
     });
 
     it('should emit success event', async () => {
       const [investor] = investors;
-      await expect(crowdfunding.connect(investor).invest({ value: parseEther('1') }))
+      await expect(
+        crowdfunding.connect(investor).invest({ value: parseEther('1') })
+      )
         .to.emit(crowdfunding, 'Invested')
         .withArgs(await investor.getAddress(), parseEther('1'));
     });
@@ -86,7 +97,9 @@ describe('Crowdfunding', () => {
 
     it('should emit Finalized event if investment reaches objective', async () => {
       const [investor] = investors;
-      await expect(crowdfunding.connect(investor).invest({ value: parseEther('2') }))
+      await expect(
+        crowdfunding.connect(investor).invest({ value: parseEther('2') })
+      )
         .to.emit(crowdfunding, 'Finalized')
         .withArgs(await beneficiary.getAddress(), 1);
     });
@@ -113,28 +126,32 @@ describe('Crowdfunding', () => {
     it('should allow only the address with the FINALIZER_ROLE to invoke', async () => {
       const [investor] = investors;
       await crowdfunding.finalize();
-      await expect(crowdfunding.connect(investor).finalize())
-        .to.be.reverted;
+      await expect(crowdfunding.connect(investor).finalize()).to.be.reverted;
     });
 
     describe('Platform Reward', () => {
       it('should mint a reward if crowdfunding succeeds', async () => {
         const [investor] = investors;
-        await expect(crowdfunding.connect(investor).invest({ value: parseEther('2') }))
+        await expect(
+          crowdfunding.connect(investor).invest({ value: parseEther('2') })
+        )
           .to.emit(crowdfunding, 'PlatformRewarded')
           .withArgs(await devTeam.getAddress(), parseEther('0.05'));
       });
 
       it('should not mint a reward if crowdfunding fails', async () => {
-        await expect(crowdfunding.connect(owner).finalize())
-          .to.not.emit(crowdfunding, 'PlatformRewarded');
+        await expect(crowdfunding.connect(owner).finalize()).to.not.emit(
+          crowdfunding,
+          'PlatformRewarded'
+        );
       });
 
       it('should mint the reward on the dev team wallet', async () => {
         const [investor] = investors;
-        await crowdfunding.connect(investor).invest({ value: parseEther('2') })
-        expect(await starToken.balanceOf(await devTeam.getAddress()))
-          .to.eq(parseEther('0.05'))
+        await crowdfunding.connect(investor).invest({ value: parseEther('2') });
+        expect(await starToken.balanceOf(await devTeam.getAddress())).to.eq(
+          parseEther('0.05')
+        );
       });
     });
   });
@@ -144,28 +161,33 @@ describe('Crowdfunding', () => {
       const [investor] = investors;
       await crowdfunding.connect(investor).invest({ value: parseEther('2') });
       await crowdfunding.connect(investor).claimReward();
-      const investorBalance = await starToken.balanceOf(await investor.getAddress());
+      const investorBalance = await starToken.balanceOf(
+        await investor.getAddress()
+      );
       expect(investorBalance).to.eq(parseEther('1'));
     });
 
     it('should revert if no reward is available to the address', async () => {
       const [investor, noRewardInvestor] = investors;
       await crowdfunding.connect(investor).invest({ value: parseEther('2') });
-      await expect(crowdfunding.connect(noRewardInvestor).claimReward())
-        .to.be.revertedWith('No reward for address.');
+      await expect(
+        crowdfunding.connect(noRewardInvestor).claimReward()
+      ).to.be.revertedWith('No reward for address.');
     });
 
     it('should revert if crowdfunding still in progress', async () => {
       const [investor] = investors;
-      await expect(crowdfunding.connect(investor).claimReward())
-        .to.be.revertedWith('No rewards available.');
+      await expect(
+        crowdfunding.connect(investor).claimReward()
+      ).to.be.revertedWith('No rewards available.');
     });
 
     it('should revert if crowdfunding has failed', async () => {
       const [investor] = investors;
       await crowdfunding.connect(owner).finalize();
-      await expect(crowdfunding.connect(investor).claimReward())
-        .to.be.revertedWith('No rewards available.');
+      await expect(
+        crowdfunding.connect(investor).claimReward()
+      ).to.be.revertedWith('No rewards available.');
     });
 
     it('should emit InvestmentRewarded event on success', async () => {
@@ -191,22 +213,25 @@ describe('Crowdfunding', () => {
       const [investor, notInvestor] = investors;
       await crowdfunding.connect(investor).invest({ value: parseEther('1') });
       await crowdfunding.connect(owner).finalize();
-      await expect(crowdfunding.connect(notInvestor).refund())
-        .to.be.revertedWith('No investments for address.');
+      await expect(
+        crowdfunding.connect(notInvestor).refund()
+      ).to.be.revertedWith('No investments for address.');
     });
 
     it('should revert if crowdfunding still in progress', async () => {
       const [investor] = investors;
       await crowdfunding.connect(investor).invest({ value: parseEther('1') });
-      await expect(crowdfunding.connect(investor).refund())
-        .to.be.revertedWith('Unable to refund.');
+      await expect(crowdfunding.connect(investor).refund()).to.be.revertedWith(
+        'Unable to refund.'
+      );
     });
 
     it('should revert if crowdfunding has succeeded', async () => {
       const [investor] = investors;
       await crowdfunding.connect(investor).invest({ value: parseEther('2') });
-      await expect(crowdfunding.connect(investor).refund())
-        .to.be.revertedWith('Unable to refund.');
+      await expect(crowdfunding.connect(investor).refund()).to.be.revertedWith(
+        'Unable to refund.'
+      );
     });
 
     it('should emit InvestmentRefunded event on success', async () => {
@@ -231,23 +256,26 @@ describe('Crowdfunding', () => {
       const [investor] = investors;
       await crowdfunding.connect(investor).invest({ value: parseEther('2') });
       await crowdfunding.connect(beneficiary).withdraw();
-      await expect(crowdfunding.connect(beneficiary).withdraw())
-        .to.be.revertedWith('Already withdrawn.');
+      await expect(
+        crowdfunding.connect(beneficiary).withdraw()
+      ).to.be.revertedWith('Already withdrawn.');
     });
 
     it('should revert if crowdfunding still in progress', async () => {
       const [investor] = investors;
       await crowdfunding.connect(investor).invest({ value: parseEther('1') });
-      await expect(crowdfunding.connect(beneficiary).withdraw())
-        .to.be.revertedWith('Unable to withdraw.');
+      await expect(
+        crowdfunding.connect(beneficiary).withdraw()
+      ).to.be.revertedWith('Unable to withdraw.');
     });
 
     it('should revert if crowdfunding has failed', async () => {
       const [investor] = investors;
       await crowdfunding.connect(investor).invest({ value: parseEther('1') });
       await crowdfunding.connect(owner).finalize();
-      await expect(crowdfunding.connect(beneficiary).withdraw())
-        .to.be.revertedWith('Unable to withdraw.');
+      await expect(
+        crowdfunding.connect(beneficiary).withdraw()
+      ).to.be.revertedWith('Unable to withdraw.');
     });
 
     it('should emit InvestmentWithdrawn event on success', async () => {
