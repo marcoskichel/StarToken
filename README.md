@@ -31,6 +31,7 @@ The frontend application lives under the `frontend` folder, while the DApp files
 Test for the DApp use [ChaiJS](https://www.chaijs.com/) with [Waffle](https://getwaffle.io/).
 
 To run them use the following command:
+
 ```bash
-  npm run tests
+  npm run test
 ```
