@@ -7,6 +7,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.web3modal-modal-hitbox {
+  background-color: transparent !important;
+}
+
+.web3modal-modal-lightbox {
+  background-color: transparent !important;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;

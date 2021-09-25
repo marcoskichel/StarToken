@@ -13,3 +13,5 @@ frontend/src/hardhat
 # Coverage
 coverage
 coverage.json
+
+**/*.log

@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
 import { Button } from '@material-ui/core';
-import { StarTokenContext } from '../../hardhat/SymfoniContext';
+import { StarTokenContext } from '../hardhat/SymfoniContext';
 
 type Props = {};
 
-export function ProposalForm(props: Props) {
+export function ProposalFormPage(props: Props) {
   const starToken = useContext(StarTokenContext);
 
   const handleClick = async () => {

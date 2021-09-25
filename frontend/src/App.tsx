@@ -1,22 +1,31 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import { ProposalForm } from './proposals';
+import { ProposalFormPage } from './proposals';
 import { Symfoni } from './hardhat/SymfoniContext';
+import { makeStyles } from '@material-ui/core';
+
+const useStyles = makeStyles({
+  app: {
+    maxWidth: '800px',
+    margin: '0 auto',
+  },
+});
 
 function App() {
+  const styles = useStyles();
   return (
     <>
-      <div className="App">
-        <BrowserRouter>
-          <Symfoni>
+      <BrowserRouter>
+        <Symfoni showLoading={false} autoInit={false}>
+          <div className={styles.app}>
             <Switch>
               <Route path="/">
-                <ProposalForm />
+                <ProposalFormPage />
               </Route>
             </Switch>
-          </Symfoni>
-        </BrowserRouter>
-      </div>
+          </div>
+        </Symfoni>
+      </BrowserRouter>
       <link
         rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"

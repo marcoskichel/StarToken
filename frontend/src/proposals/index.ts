@@ -1,1 +1,1 @@
-export * from './containers/ProposalForm';
+export * from './ProposalFormPage';
