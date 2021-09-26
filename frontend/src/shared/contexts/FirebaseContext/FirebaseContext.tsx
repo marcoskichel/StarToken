@@ -1,6 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { FirebaseApp, initializeApp } from 'firebase/app';
-import { getAnalytics, Analytics } from 'firebase/analytics';
+import firebase from 'firebase/compat';
+import Firestore = firebase.firestore.Firestore;
+import Auth = firebase.auth.Auth;
+import App = firebase.app.App;
+import Analytics = firebase.analytics.Analytics;
 
 // TODO: Replace hardcoded values
 const firebaseConfig = {
@@ -14,27 +17,35 @@ const firebaseConfig = {
 };
 
 interface IFirebaseContext {
-  firebaseApp?: FirebaseApp;
+  firebaseApp?: App;
   firebaseAnalytics?: Analytics;
+  firestore?: Firestore;
+  auth?: Auth;
 }
 
 const FirebaseContext = React.createContext<IFirebaseContext>({});
 
 const FirebaseProvider = (props: React.PropsWithChildren<{}>) => {
   const { children } = props;
-  const [firebaseApp, setFirebaseApp] = useState<FirebaseApp>();
+  const [firebaseApp, setFirebaseApp] = useState<App>();
   const [firebaseAnalytics, setFirebaseAnalytics] = useState<Analytics>();
+  const [firestore, setFirestore] = useState<Firestore>();
+  const [auth, setAuth] = useState<Auth>();
 
   useEffect(() => {
-    if (!firebaseApp) {
-      const app = initializeApp(firebaseConfig);
+    if (!firebase.apps.length) {
+      const app = firebase.initializeApp(firebaseConfig);
       setFirebaseApp(app);
-      setFirebaseAnalytics(getAnalytics(app));
+      setFirebaseAnalytics(firebase.analytics(app));
+      setFirestore(firebase.firestore(app));
+      setAuth(firebase.auth(app));
     }
   }, []);
 
   return (
-    <FirebaseContext.Provider value={{ firebaseApp, firebaseAnalytics }}>
+    <FirebaseContext.Provider
+      value={{ firebaseApp, firebaseAnalytics, firestore, auth }}
+    >
       {children}
     </FirebaseContext.Provider>
   );

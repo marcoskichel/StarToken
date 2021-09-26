@@ -1,8 +1,9 @@
 import React from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import { ProposalFormPage } from './proposals';
+import { BrowserRouter, Route } from 'react-router-dom';
 import { Symfoni } from './hardhat/SymfoniContext';
 import { makeStyles } from '@material-ui/core';
+import { FirebaseProvider, i18n } from 'shared';
+import { StudentSignInPage } from 'students';
 
 const useStyles = makeStyles({
   app: {
@@ -17,13 +18,13 @@ function App() {
     <>
       <BrowserRouter>
         <Symfoni showLoading={false} autoInit={false}>
-          <div className={styles.app}>
-            <Switch>
-              <Route path="/">
-                <ProposalFormPage />
+          <FirebaseProvider>
+            <div className={styles.app}>
+              <Route path="/" exact>
+                <StudentSignInPage />
               </Route>
-            </Switch>
-          </div>
+            </div>
+          </FirebaseProvider>
         </Symfoni>
       </BrowserRouter>
       <link
