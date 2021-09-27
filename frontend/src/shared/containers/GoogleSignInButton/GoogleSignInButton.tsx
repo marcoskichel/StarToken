@@ -1,18 +1,24 @@
 import * as React from 'react';
-import { Button } from '@material-ui/core';
-import { useFirebase } from 'shared';
-import firebase from 'firebase/compat';
+import { Button, makeStyles } from '@material-ui/core';
+import { useAuth } from 'shared';
+import googleIcon from 'assets/icons/google_icon.png';
+
+const useStyles = makeStyles({
+  icon: {
+    height: '24px',
+  },
+});
 
 const GoogleSignInButton = () => {
-  const { auth } = useFirebase();
-
-  const handleClick = () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    const credentials = auth?.signInWithPopup(provider);
-  };
+  const { signInWithGoogle } = useAuth();
+  const styles = useStyles();
 
   return (
-    <Button onClick={handleClick} variant="outlined">
+    <Button
+      onClick={signInWithGoogle}
+      variant="outlined"
+      startIcon={<img src={googleIcon} className={styles.icon} alt="Google" />}
+    >
       Continue with Google
     </Button>
   );

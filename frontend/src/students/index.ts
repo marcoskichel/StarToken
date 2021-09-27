@@ -1,1 +1,2 @@
-export * from './pages/StudentSignInPage/StudentSignInPage';
+export * from './pages';
+export * from './constants';

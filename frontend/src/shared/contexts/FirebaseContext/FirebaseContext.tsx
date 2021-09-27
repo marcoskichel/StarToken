@@ -1,12 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react';
-import firebase from 'firebase/compat';
-import Firestore = firebase.firestore.Firestore;
-import Auth = firebase.auth.Auth;
-import App = firebase.app.App;
-import Analytics = firebase.analytics.Analytics;
+import * as firebase from 'firebase/app';
+import * as firestore from 'firebase/firestore';
+import * as auth from 'firebase/auth';
+import * as analytics from 'firebase/analytics';
+
+export type FirebaseApp = firebase.FirebaseApp;
+export type Firestore = firestore.Firestore;
+export type Analytics = analytics.Analytics;
+export type Auth = auth.Auth;
 
 // TODO: Replace hardcoded values
-const firebaseConfig = {
+const config = {
   apiKey: 'AIzaSyC8On9s3Xk2Xmq5MArYflw-oVgJ2S0GhBw',
   authDomain: 'startoken-8e085.firebaseapp.com',
   projectId: 'startoken-8e085',
@@ -17,34 +21,39 @@ const firebaseConfig = {
 };
 
 interface IFirebaseContext {
-  firebaseApp?: App;
-  firebaseAnalytics?: Analytics;
-  firestore?: Firestore;
-  auth?: Auth;
+  app: FirebaseApp;
+  analytics: Analytics;
+  firestore: Firestore;
+  auth: Auth;
 }
 
-const FirebaseContext = React.createContext<IFirebaseContext>({});
+const FirebaseContext = React.createContext<Partial<IFirebaseContext>>({});
 
 const FirebaseProvider = (props: React.PropsWithChildren<{}>) => {
   const { children } = props;
-  const [firebaseApp, setFirebaseApp] = useState<App>();
-  const [firebaseAnalytics, setFirebaseAnalytics] = useState<Analytics>();
-  const [firestore, setFirestore] = useState<Firestore>();
-  const [auth, setAuth] = useState<Auth>();
+  const [appInstance, setAppInstance] = useState<FirebaseApp>();
+  const [analyticsInstance, setAnalyticsInstance] = useState<Analytics>();
+  const [firestoreInstance, setFirestoreInstance] = useState<Firestore>();
+  const [firebaseAuth, setFirebaseAuth] = useState<Auth>();
 
   useEffect(() => {
-    if (!firebase.apps.length) {
-      const app = firebase.initializeApp(firebaseConfig);
-      setFirebaseApp(app);
-      setFirebaseAnalytics(firebase.analytics(app));
-      setFirestore(firebase.firestore(app));
-      setAuth(firebase.auth(app));
+    if (!firebaseAuth) {
+      const app = firebase.initializeApp(config);
+      setAppInstance(app);
+      setAnalyticsInstance(analytics.getAnalytics(app));
+      setFirestoreInstance(firestore.getFirestore(app));
+      setFirebaseAuth(auth.getAuth(app));
     }
-  }, []);
+  }, [firebaseAuth]);
 
   return (
     <FirebaseContext.Provider
-      value={{ firebaseApp, firebaseAnalytics, firestore, auth }}
+      value={{
+        app: appInstance,
+        analytics: analyticsInstance,
+        firestore: firestoreInstance,
+        auth: firebaseAuth,
+      }}
     >
       {children}
     </FirebaseContext.Provider>
