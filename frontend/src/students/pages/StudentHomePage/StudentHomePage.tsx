@@ -1,15 +1,13 @@
-import { useAuth } from 'shared';
-import { Button } from '@material-ui/core';
+import { Container, Navigation, useAuth } from 'shared';
 
 const StudentHomePage = () => {
-  const { loggedUser, signOut } = useAuth();
+  const { loggedUser } = useAuth();
   return (
     <>
-      <h1>Student Home</h1>
-      <p>{loggedUser?.email}</p>
-      <Button onClick={signOut} variant="outlined">
-        Logout
-      </Button>
+      <Navigation title="student_home__title" />
+      <Container>
+        <p>{loggedUser?.email}</p>
+      </Container>
     </>
   );
 };

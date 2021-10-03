@@ -1,15 +1,15 @@
 import React from 'react';
-import { GoogleSignInButton } from 'shared';
 import { Trans } from 'react-i18next';
+import { Container, GoogleSignInButton } from 'shared';
 
 const StudentSignInPage = () => {
   return (
-    <div>
+    <Container>
       <h1>
         <Trans i18nKey="student_sign_in__header" />
       </h1>
       <GoogleSignInButton />
-    </div>
+    </Container>
   );
 };
 

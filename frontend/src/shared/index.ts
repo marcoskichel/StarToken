@@ -1,4 +1,5 @@
 export * from './containers';
+export * from './components';
 export * from './contexts';
 export * from './themes';
 export * from './pages';

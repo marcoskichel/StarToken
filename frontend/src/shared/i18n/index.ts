@@ -9,7 +9,12 @@ export default i18n
     resources: {
       'pt-BR': {
         translation: {
+          // Shared
+          shared__continue_with_google: 'Continue with Google',
+          // Student Sign In
           student_sign_in__header: 'Welcome to the Star Platform',
+          // Student Home
+          student_home__title: 'Home',
         },
       },
     },

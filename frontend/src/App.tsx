@@ -1,7 +1,6 @@
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { Symfoni } from './hardhat/SymfoniContext';
-import { makeStyles } from '@material-ui/core';
 import {
   AuthProvider,
   FirebaseProvider,
@@ -10,21 +9,13 @@ import {
 } from 'shared';
 import { StudentHomePage, StudentRoutes, StudentSignInPage } from 'students';
 
-const useStyles = makeStyles({
-  app: {
-    maxWidth: '800px',
-    margin: '0 auto',
-  },
-});
-
 function App() {
-  const styles = useStyles();
   return (
     <>
       <Symfoni showLoading={false} autoInit={false}>
         <FirebaseProvider>
           <AuthProvider>
-            <div className={styles.app}>
+            <div>
               <Switch>
                 <Route path="/" exact>
                   <Redirect to={StudentRoutes.HOME} />
