@@ -11,7 +11,8 @@ import {
 } from '@material-ui/core';
 import { Menu as MenuIcon, ExitToApp as LogoutIcon } from '@material-ui/icons';
 import { Trans } from 'react-i18next';
-import { useAuth } from 'shared';
+import { NavigationDrawer, useAuth } from 'shared';
+import { NavigationBar } from 'shared/containers/Navigation/NavigationBar';
 
 interface Props {
   title?: string;
@@ -32,40 +33,24 @@ const useStyles = makeStyles({
 });
 
 const Navigation = (props: Props) => {
-  const { title } = props;
+  const { title = '' } = props;
   const { signOut } = useAuth();
   const styles = useStyles();
 
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+    setIsDrawerOpen(!isDrawerOpen);
   };
 
   return (
     <Box className={styles.container}>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            edge="end"
-            color="inherit"
-            aria-label="menu"
-            className={styles.menuBtn}
-            onClick={toggleMenu}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" component="div" className={styles.title}>
-            <Trans i18nKey={title} />
-          </Typography>
-          <IconButton className={styles.logoutBtn} onClick={signOut}>
-            <LogoutIcon />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
-      <Drawer anchor="left" open={isMenuOpen} onClose={toggleMenu}>
-        <span>Menu content</span>
-      </Drawer>
+      <NavigationBar
+        title={title}
+        onMenuToggle={toggleMenu}
+        onSignOut={signOut}
+      />
+      <NavigationDrawer isOpen={isDrawerOpen} onToggle={toggleMenu} />
     </Box>
   );
 };

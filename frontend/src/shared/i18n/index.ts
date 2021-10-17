@@ -14,7 +14,7 @@ export default i18n
           // Student Sign In
           student_sign_in__header: 'Welcome to the Star Platform',
           // Student Home
-          student_home__title: 'Home',
+          shared__home: 'Home',
         },
       },
     },

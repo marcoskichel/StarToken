@@ -4,7 +4,7 @@ const StudentHomePage = () => {
   const { loggedUser } = useAuth();
   return (
     <>
-      <Navigation title="student_home__title" />
+      <Navigation title="shared__home" />
       <Container>
         <p>{loggedUser?.email}</p>
       </Container>

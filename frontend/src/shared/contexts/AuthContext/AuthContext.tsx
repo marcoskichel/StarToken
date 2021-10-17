@@ -39,12 +39,14 @@ const AuthProvider = (props: PropsWithChildren<{}>) => {
   const [loggedUser, setLoggedUser] = useState<User | undefined | null>();
   const [status, setStatus] = useState<AuthStatus>(AuthStatus.PENDING);
 
+  // Updates the logger user on Firebase Auth changes
   useEffect(() => {
     auth?.onAuthStateChanged((user) => {
       setLoggedUser(user);
     });
   }, [auth]);
 
+  // Updates user access status on loggedUser changes
   useEffect(() => {
     if (loggedUser) {
       setStatus(AuthStatus.AUTHENTICATED);
