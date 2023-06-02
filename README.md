@@ -1,37 +1,5 @@
 # StarToken
 
-Student crowdsourcing platform consisting of a [Solidity](https://docs.soliditylang.org/en/v0.8.7/) second-generation
-blockchain DApp developed using the [HardHat](https://hardhat.org/) framework and a [ReactJS](https://reactjs.org/) web
-frontend.
+A web3 app that I started some time ago but never finished, making it public now as a solidity portfolio.
 
-The frontend application lives under the `frontend` folder, while the DApp files are in the project's root.
-
-# Requirements
-
-- [Node](https://nodejs.org/en/): version 14.17.0.
-
-# Setup
-
-- Install the application dependencies
-
-```bash
-  npm install
-```
-
-- Compile the DApp files
-
-```bash
-  npm run compile
-```
-
-# Development
-
-### Running tests
-
-Test for the DApp use [ChaiJS](https://www.chaijs.com/) with [Waffle](https://getwaffle.io/).
-
-To run them use the following command:
-
-```bash
-  npm run test
-```
+The idea consisted of a crowdfunding platform for people that could not pay for their education, the app rewarded donators with platform token called "StarTokens", which could be traded for profit.
